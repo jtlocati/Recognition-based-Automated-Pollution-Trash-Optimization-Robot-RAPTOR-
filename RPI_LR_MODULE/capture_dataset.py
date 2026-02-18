@@ -8,6 +8,13 @@ must create:
 Install pi cam2 on RPI
     sudo apt install -y python3-picamera2 python3-gpiozero
 
+To run in RPI:
+    python3 capture_dataset.py
+
+    OR if cloning repo:
+    python3 Recognition-based-Automated-Pollution-Trash-Optimization-Robot-RAPTOR/capture_dataset.py
+
+
 """
 """install once on RPI"""
 #from gpiozero import Button
