@@ -1,3 +1,4 @@
+#pi native import, no need to import into local venv.
 #from picamera2 import Picamera2
 from datetime import datetime
 from pathlib import Path
@@ -46,12 +47,12 @@ picam2 = Picamera2()
 
 # Preview stream (fast, for live display)
 preview_config = picam2.create_preview_configuration(
-    main={"format": "BGR888", "size": (PREVIEW_WIDTH, PREVIEW_HEIGHT)}
+    main={"format": "RGB888", "size": (PREVIEW_WIDTH, PREVIEW_HEIGHT)}
 )
 
 # Still capture config (for saved images)
 still_config = picam2.create_still_configuration(
-    main={"format": "BGR888", "size": (SAVE_WIDTH, SAVE_HEIGHT)}
+    main={"format": "RGB888", "size": (SAVE_WIDTH, SAVE_HEIGHT)}
 )
 
 picam2.configure(preview_config)
@@ -66,6 +67,8 @@ try:
     while True:
         # Live preview frame
         frame = picam2.capture_array()
+        #possible implemntation of color correction:
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         cv2.imshow(WINDOW_NAME, frame)
 
         key = cv2.waitKey(1) & 0xFF
@@ -83,6 +86,7 @@ try:
             time.sleep(0.1)  # short settle
 
             still = picam2.capture_array()
+            still = cv2.cvtColor(still, cv2.COLOR_RGB2BGR)
             cv2.imwrite(str(filepath), still)
             log_to_csv(filename, ts)
             print(f"Saved: {filepath}")
