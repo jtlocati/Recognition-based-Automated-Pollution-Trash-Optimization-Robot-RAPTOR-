@@ -1,5 +1,10 @@
 #pi native import, no need to import into local venv.
 #from picamera2 import Picamera2
+
+#PI impotrt path:
+#from trashbot.Test.BonMonTest import moto
+
+from Tests.BonMotTest import moto
 from datetime import datetime
 from pathlib import Path
 import csv
@@ -13,6 +18,7 @@ sudo apt install -y python3-picamera2 python3-opencv
 
 
 """
+Turning_statis = False
 
 
 # Config
@@ -59,7 +65,7 @@ picam2.configure(preview_config)
 picam2.start()
 time.sleep(1)  # warm-up
 
-print("Running. Press SPACE to save an image. Press Q to quit.")
+print("PRESS' SPACE' TO TAKE IMAGE")
 
 
 # Continul loop
@@ -96,6 +102,31 @@ try:
             picam2.configure(preview_config)
             picam2.start()
             time.sleep(0.1)
+
+            
+            #highly optional stepper motor component
+            Turning_status = moto()
+            
+
+            if Turning_status == False:
+                print("THANK YOU FOR YOUR CONTROBUTION")
+
+            while Turning_statis == False:
+                still = picam2.capture_array()
+                still = cv2.cvtColor(still, cv2.COLOR_RGB2BGR)
+                cv2.imwrite(str(filepath), still)
+                log_to_csv(filename, ts)
+                print(f"Saved: {filepath}")
+            
+            for _ in len(10):
+                print("THANK YOU FOR YOUR CONTROBUTION")
+                time.sleep(.5)
+                print(" ")
+
+            print("PRESS' SPACE' TO TAKE IMAGE")
+
+
+
 
         # Q -> quit (mainly for testing)
         elif key == ord('q'):
