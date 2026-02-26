@@ -4,7 +4,7 @@
 #PI impotrt path:
 #from trashbot.Test.BonMonTest import moto
 
-from Tests.BonMotTest import moto
+#from RPI_LR_MODULE.BonMotTest import moto -> stepper motor dependency
 from datetime import datetime
 from pathlib import Path
 import csv
@@ -105,9 +105,8 @@ try:
 
             
             #highly optional stepper motor component
-            Turning_status = moto()
+            """Turning_status = moto()
             
-
             if Turning_status == False:
                 print("THANK YOU FOR YOUR CONTROBUTION")
 
@@ -123,10 +122,7 @@ try:
                 time.sleep(.5)
                 print(" ")
 
-            print("PRESS' SPACE' TO TAKE IMAGE")
-
-
-
+            print("PRESS' SPACE' TO TAKE IMAGE")"""
 
         # Q -> quit (mainly for testing)
         elif key == ord('q'):
