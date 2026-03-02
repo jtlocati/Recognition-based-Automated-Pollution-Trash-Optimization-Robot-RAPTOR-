@@ -1,6 +1,7 @@
 #Use this code to test the functionality of the motors without being dependent on imageing software
 
 #import RPi.GPIO as GPIO -> RPI native install "sudo apt install python3-gpiozero"
+
 #for now import random stuff to void errors
 from math import comb as GPIO #DELETE BEFORE RUNNING
 import time
