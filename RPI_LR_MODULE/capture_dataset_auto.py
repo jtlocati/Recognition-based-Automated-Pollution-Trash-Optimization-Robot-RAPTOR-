@@ -29,10 +29,8 @@ SAVE_WIDTH = 1280
 SAVE_HEIGHT = 720
 
 # ROI where food will appear (fractions of frame): (x1, y1, x2, y2)
-# You should adjust this to focus only on the plate/area under the camera.
 ROI_FRAC = (0.20, 0.20, 0.80, 0.85)
 
-# "Black" detection threshold in grayscale.
 # Pixels below this value count as black background.
 BLACK_THRESH = 35
 
@@ -44,12 +42,11 @@ COOLDOWN_SECONDS = 2.0    # after capture, ignore triggers for this long
 # Baseline calibration
 CALIBRATION_FRAMES = 20   # average over N frames when scene is empty
 
-# Optional: ignore very bright reflections by smoothing
+# ignore very bright reflections by smoothing
 BLUR_KERNEL = (5, 5)
 
-# ----------------------------
+
 # Setup folders
-# ----------------------------
 IMG_DIR.mkdir(parents=True, exist_ok=True)
 
 def log_to_csv(filename: str, timestamp: str):
@@ -74,7 +71,7 @@ def black_fraction(roi_bgr):
     if BLUR_KERNEL is not None:
         gray = cv2.GaussianBlur(gray, BLUR_KERNEL, 0)
     black_mask = gray < BLACK_THRESH
-    return float(np.mean(black_mask))  # fraction in [0,1]
+    return float(np.mean(black_mask))
 
 def calibrate_baseline(picam2):
     print("\nCalibration: make sure NOTHING is under the camera (only black background).")
@@ -95,7 +92,7 @@ def save_still(picam2, preview_config, still_config):
     filename = f"trash_{ts}.jpg"
     filepath = IMG_DIR / filename
 
-    # Switch to still config for higher quality save
+    # Switch to still config
     picam2.stop()
     picam2.configure(still_config)
     picam2.start()
@@ -115,9 +112,8 @@ def save_still(picam2, preview_config, still_config):
 
     return ts, filename, filepath
 
-# ----------------------------
-# Setup camera
-# ----------------------------
+
+# Camera Initalization
 picam2 = Picamera2()
 
 preview_config = picam2.create_preview_configuration(
@@ -136,9 +132,9 @@ baseline_black = calibrate_baseline(picam2)
 print("\nRunning. Place food under camera to auto-capture.")
 print("Controls: q=quit, r=recalibrate baseline\n")
 
-# ----------------------------
-# Main loop
-# ----------------------------
+
+# ========================================== Main loop ==========================================
+
 debounce_count = 0
 last_capture_time = 0.0
 
