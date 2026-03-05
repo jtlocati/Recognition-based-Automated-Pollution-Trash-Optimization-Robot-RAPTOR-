@@ -14,9 +14,8 @@ sudo apt update
 sudo apt install -y python3-picamera2 python3-opencv
 """
 
-# ----------------------------
-# Config
-# ----------------------------
+
+# Configuration (RPI window / file path)
 WINDOW_NAME = "Trash Dataset Capture (AUTO when object placed)  |  q=quit, r=recalibrate"
 DATASET_DIR = Path("dataset")
 IMG_DIR = DATASET_DIR / "images"
@@ -35,14 +34,19 @@ ROI_FRAC = (0.20, 0.20, 0.80, 0.85)
 BLACK_THRESH = 35
 
 # Trigger conditions
-MIN_BLACK_DROP = 0.15     # trigger when black% drops by >= 15% from baseline
-DEBOUNCE_FRAMES = 4       # require the condition for this many consecutive frames
-COOLDOWN_SECONDS = 2.0    # after capture, ignore triggers for this long
+# trigger when black% drops by >= 15% from baseline
+MIN_BLACK_DROP = 0.15   
+
+# require the condition for this many consecutive frames
+DEBOUNCE_FRAMES = 4       
+
+# after capture, ignore triggers for this long
+COOLDOWN_SECONDS = 2.0    
 
 # Baseline calibration
 CALIBRATION_FRAMES = 20   # average over N frames when scene is empty
 
-# ignore very bright reflections by smoothing
+# ignore bright reflections by smoothing
 BLUR_KERNEL = (5, 5)
 
 
@@ -155,7 +159,7 @@ try:
         now = time.time()
         in_cooldown = (now - last_capture_time) < COOLDOWN_SECONDS
 
-        # Trigger logic
+        # Trigger function
         trigger_condition = (drop >= MIN_BLACK_DROP) and (not in_cooldown)
 
         if trigger_condition:
