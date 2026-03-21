@@ -1,8 +1,5 @@
 # Pi-only import — comment out and use a mock to test on a regular computer
-#version 1.2
-#from picamera2 import Picamera2
-# from math import cos as Picamera2   # placeholder for non-Pi testing
-
+from picamera2 import Picamera2
 from datetime import datetime
 from pathlib import Path
 import csv
@@ -92,8 +89,8 @@ def calibrate_baseline(picam2):
     print(f"Calibrating using {CALIBRATION_FRAMES} frames ...")
     accum = None
     for _ in range(CALIBRATION_FRAMES):
-        frame = picam2.capture_array()
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        frame = picam2.capture_array("lores")
+        frame = cv2.cvtColor(frame, cv2.COLOR_YUV420p2BGR)
         roi, _ = get_roi(frame)
         gray = to_gray_blurred(roi)
         if accum is None:
