@@ -21,8 +21,8 @@ DATASET_DIR = Path("dataset")
 IMG_DIR = DATASET_DIR / "images"
 CSV_PATH = DATASET_DIR / "captures.csv"
 
-PREVIEW_WIDTH = 640
-PREVIEW_HEIGHT = 480
+PREVIEW_WIDTH = 1280
+PREVIEW_HEIGHT = 1280
 
 SAVE_WIDTH = 1280
 SAVE_HEIGHT = 720
@@ -33,10 +33,10 @@ ROI_FRAC = (0.20, 0.20, 0.80, 0.85)
 # ---- Trigger via mean absolute pixel difference from baseline ----
 # When the average per-pixel brightness change in the ROI exceeds this
 # value (0–255 scale), we consider an object present.
-CHANGE_THRESH = 12          # tune this: lower = more sensitive
+CHANGE_THRESH = 18          # tune this: lower = more sensitive
 
-DEBOUNCE_FRAMES = 4         # require condition for N consecutive frames
-COOLDOWN_SECONDS = 2.0      # ignore triggers for this long after a capture
+DEBOUNCE_FRAMES = 10         # require condition for N consecutive frames
+COOLDOWN_SECONDS = 10.0      # ignore triggers for this long after a capture
 
 # Baseline calibration
 CALIBRATION_FRAMES = 20     # average over N frames when scene is empty
@@ -158,12 +158,28 @@ try:
         # ---- Visual overlay ----
         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 2)
 
-        status = f"diff={diff:.1f}  thresh={CHANGE_THRESH}"
-        cv2.putText(frame, status, (10, 25),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-
         now = time.time()
         in_cooldown = (now - last_capture_time) < COOLDOWN_SECONDS
+
+        # ---- Cooldown/status text only ----
+        if in_cooldown:
+            remaining = COOLDOWN_SECONDS - (now - last_capture_time)
+            text = f"Cooldown: {remaining:.1f}s"
+            text_color = (0, 0, 255)   # Red
+        else:
+            text = "Cooldown: 0.0s"
+            text_color = (0, 255, 0)   # Green
+
+        cv2.putText(
+            frame,
+            text,
+            (20, 60),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.4,                       # bigger font
+            text_color,
+            4,
+            cv2.LINE_AA
+        )
 
         # ---- Trigger logic ----
         trigger_condition = (diff >= CHANGE_THRESH) and (not in_cooldown)
@@ -172,16 +188,6 @@ try:
             debounce_count += 1
         else:
             debounce_count = 0
-
-        cv2.putText(
-            frame,
-            f"debounce={debounce_count}/{DEBOUNCE_FRAMES}  cooldown={'YES' if in_cooldown else 'NO'}",
-            (10, 50),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.6,
-            (255, 255, 255),
-            2,
-        )
 
         cv2.imshow(WINDOW_NAME, frame)
         key = cv2.waitKey(1) & 0xFF
