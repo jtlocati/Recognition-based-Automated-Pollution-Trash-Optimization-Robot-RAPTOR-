@@ -30,16 +30,16 @@ SAVE_HEIGHT = 720
 # ROI where trash will appear (fractions of frame): (x1, y1, x2, y2)
 ROI_FRAC = (0.20, 0.20, 0.80, 0.85)
 
-# ---- Trigger via mean absolute pixel difference from baseline ----
+# Trigger via mean absolute pixel difference from baseline
 # When the average per-pixel brightness change in the ROI exceeds this
 # value (0–255 scale), we consider an object present.
-CHANGE_THRESH = 18          # tune this: lower = more sensitive
+CHANGE_THRESH = 18 # tune this: lower = more sensitive
 
-DEBOUNCE_FRAMES = 10         # require condition for N consecutive frames
-COOLDOWN_SECONDS = 10.0      # ignore triggers for this long after a capture
+DEBOUNCE_FRAMES = 10 # require condition for N consecutive frames
+COOLDOWN_SECONDS = 10.0 # ignore triggers for this long after a capture
 
 # Baseline calibration
-CALIBRATION_FRAMES = 20     # average over N frames when scene is empty
+CALIBRATION_FRAMES = 20 # average over N frames when scene is empty
 
 # Smooth out sensor noise before comparison
 BLUR_KERNEL = (7, 7)
@@ -69,22 +69,17 @@ def get_roi(frame_bgr):
 
 
 def to_gray_blurred(bgr):
-    """Convert a BGR image to blurred grayscale for stable comparison."""
     gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     return cv2.GaussianBlur(gray, BLUR_KERNEL, 0)
 
 
 def mean_abs_diff(roi_bgr, baseline_gray):
-    """Return the mean absolute per-pixel difference between the current
-    ROI and the stored baseline grayscale image (0-255 scale)."""
     gray = to_gray_blurred(roi_bgr)
     diff = cv2.absdiff(gray, baseline_gray)
     return float(np.mean(diff))
 
 
 def calibrate_baseline(picam2):
-    """Capture N frames with an empty scene and average them into a single
-    grayscale baseline image.  Returns the baseline image."""
     print("\nCalibration: make sure NOTHING is under the camera (only the background).")
     print(f"Calibrating using {CALIBRATION_FRAMES} frames ...")
     accum = None
@@ -105,7 +100,7 @@ def calibrate_baseline(picam2):
 
 
 def save_still(picam2):
-    """Capture a high-res still from the main stream."""
+    #Capture a high-res still from the main stream.
     ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     filename = f"trash_{ts}.jpg"
     filepath = IMG_DIR / filename
@@ -155,33 +150,33 @@ try:
         roi, (x1, y1, x2, y2) = get_roi(frame)
         diff = mean_abs_diff(roi, baseline_gray)
 
-        # ---- Visual overlay ----
+        # Visual overlay
         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 2)
 
         now = time.time()
         in_cooldown = (now - last_capture_time) < COOLDOWN_SECONDS
 
-        # ---- Cooldown/status text only ----
+        # Cooldown/status text only
         if in_cooldown:
             remaining = COOLDOWN_SECONDS - (now - last_capture_time)
             text = f"Cooldown: {remaining:.1f}s"
-            text_color = (0, 0, 255)   # Red
+            text_color = (0, 0, 255) # Red
         else:
             text = "Cooldown: 0.0s"
-            text_color = (0, 255, 0)   # Green
+            text_color = (0, 255, 0) # Green
 
         cv2.putText(
             frame,
             text,
             (20, 60),
             cv2.FONT_HERSHEY_SIMPLEX,
-            1.4,                       # bigger font
+            1.4,#font
             text_color,
             4,
             cv2.LINE_AA
         )
 
-        # ---- Trigger logic ----
+        # Trigger logic
         trigger_condition = (diff >= CHANGE_THRESH) and (not in_cooldown)
 
         if trigger_condition:
@@ -201,7 +196,7 @@ try:
             print("Quitting...")
             break
 
-        # ---- Capture when debounced ----
+        # Capture when debounced
         if debounce_count >= DEBOUNCE_FRAMES:
             save_still(picam2)
             last_capture_time = time.time()
