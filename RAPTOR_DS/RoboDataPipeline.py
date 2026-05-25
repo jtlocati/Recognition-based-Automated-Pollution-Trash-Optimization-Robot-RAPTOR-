@@ -1,11 +1,9 @@
 from roboflow import Roboflow
-import os
-
-
+from os import path
+import 
 
 # Initialize the Roboflow object with your API key
-rf = os.getenv("ROBOAPI")
-
+rf = Roboflow(api_key="YOUR_PRIVATE_API_KEY")
 
 # Retrieve your current workspace and project name
 print(rf.workspace())
@@ -19,7 +17,15 @@ project = rf.workspace(workspaceId).project(projectId)
 # Upload the image to your project
 project.upload("UPLOAD_IMAGE.jpg")
 
-
+"""
+Optional Parameters:
+- num_retry_uploads: Number of retries for uploading the image in case of failure.
+- batch_name: Upload the image to a specific batch.
+- split: Upload the image to a specific split.
+- tag: Store metadata as a tag on the image.
+- sequence_number: [Optional] If you want to keep the order of your images in the dataset, pass sequence_number and sequence_size..
+- sequence_size: [Optional] The total number of images in the sequence. Defaults to 100,000 if not set.
+"""
 
 project.upload(
     image_path="UPLOAD_IMAGE.jpg",

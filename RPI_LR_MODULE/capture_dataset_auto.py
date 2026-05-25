@@ -14,7 +14,7 @@ sudo apt install -y python3-picamera2 python3-opencv
 """
 
 
-# ======================== Configuration ========================
+#  Configuration 
 
 WINDOW_NAME = "Trash Dataset Capture (AUTO when object placed)  |  q=quit, r=recalibrate"
 DATASET_DIR = Path("dataset")
@@ -45,7 +45,7 @@ CALIBRATION_FRAMES = 20 # average over N frames when scene is empty
 BLUR_KERNEL = (7, 7)
 
 
-# ======================== Setup ========================
+#  Setup 
 
 IMG_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -114,7 +114,7 @@ def save_still(picam2):
     return ts, filename, filepath
 
 
-# ======================== Camera Initialisation ========================
+#  Camera Initialisation 
 
 picam2 = Picamera2()
 
@@ -136,7 +136,7 @@ print("\nRunning.  Place trash under camera to auto-capture.")
 print("Controls:  q = quit,  r = recalibrate baseline\n")
 
 
-# ============================== Main loop ==============================
+#Main loop 
 
 debounce_count = 0
 last_capture_time = 0.0
