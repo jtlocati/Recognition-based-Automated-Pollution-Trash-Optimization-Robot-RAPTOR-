@@ -1,2 +1,5 @@
 /venv
 /Tests/_pycache_
+/RAPTOR-YOLO/dataset
+/RAPTOR-YOLO/runs
+/RAPTOR-YOLO/data.yaml
